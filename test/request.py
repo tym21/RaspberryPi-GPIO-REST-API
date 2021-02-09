@@ -1,8 +1,8 @@
 import requests
 
-URL = "http://raspberrypi:5000/gpio/1/state"
+URL = "http://raspberrypi:5000/gpio/7/state"
 
-response = requests.put(URL, {"state": 0})
+response = requests.put(URL, {"state": 1})
 #response = requests.get(URL)
 
 
