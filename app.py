@@ -19,7 +19,8 @@ def check_status(status):
     if not (status == 0 or status == 1):
         abort(404, message="Status is not valid")
 
-def set_GPIO(gpio, state):  # witch check
+
+def set_gpio(gpio, state):  # witch check
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(gpio, GPIO.OUT)
     GPIO.output(gpio, state)
@@ -28,7 +29,7 @@ def set_GPIO(gpio, state):  # witch check
     return state
 
 
-def get_GPIO(gpio):
+def get_gpio(gpio):
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(gpio, GPIO.OUT)
     state = GPIO.input(gpio)
@@ -39,7 +40,7 @@ def get_GPIO(gpio):
 class GPIOControl(Resource):
     def get(self, gpio):
         check_gpio(gpio)
-        status = 1
+        status = get_gpio()
         return {"gpio": gpio,
                 "status": status
                 }
@@ -49,7 +50,7 @@ class GPIOControl(Resource):
         args = gpio_put_args.parse_args()
         requested_state = args["state"]
         check_status(requested_state)
-        state = set_GPIO(gpio, requested_state)
+        state = set_gpio(gpio, requested_state)
         return {"gpio": gpio,
                 "status": state
                 }
