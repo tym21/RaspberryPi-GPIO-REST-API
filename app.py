@@ -7,7 +7,7 @@ except RuntimeError:
     print(
         "Error importing RPi.GPIO!  This is probably because you need superuser privileges.  You can achieve this by using 'sudo' to run your script")
 gpio_put_args = reqparse.RequestParser()
-gpio_put_args.add_argument("status", type=int, help="Status of the GPIO is required", required=True)
+gpio_put_args.add_argument("state", type=int, help="Status of the GPIO is required", required=True)
 
 
 def check_gpio(gpio):
@@ -16,7 +16,7 @@ def check_gpio(gpio):
 
 
 def check_status(status):
-    if not status == 0 or status == 1:
+    if not (status == 0 or status == 1):
         abort(404, message="Status is not valid")
 
 def set_GPIO(gpio, state):  # witch check
@@ -47,10 +47,11 @@ class GPIOControl(Resource):
     def put(self, gpio):
         check_gpio(gpio)
         args = gpio_put_args.parse_args()
-        check_status(args["status"])
-        set_GPIO(gpio, args["status"])
+        requested_state = args["state"]
+        check_status(requested_state)
+        state = set_GPIO(gpio, requested_state)
         return {"gpio": gpio,
-                "status": args["status"]
+                "status": state
                 }
 
 
