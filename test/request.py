@@ -1,8 +1,11 @@
 import requests
 
-BASE = "http://raspberrypi:5000/"
+URL = "http://raspberrypi:5000/gpio/1/state"
 
-response = requests.put(BASE + "/gpio/28/status", {"status": 1})
+response = requests.put(URL, {"state": 0})
+#response = requests.get(URL)
+
 
 print(response)
+print(response.text)
 print(response.json())
