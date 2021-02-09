@@ -27,7 +27,6 @@ def set_gpio(gpio, state):  # witch check
     GPIO.setup(gpio, GPIO.OUT)
     GPIO.output(gpio, state)
     state = GPIO.input(gpio)
-    GPIO.cleanup(gpio)
     return state
 
 
@@ -35,7 +34,6 @@ def get_gpio(gpio):
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(gpio, GPIO.OUT)
     state = GPIO.input(gpio)
-    GPIO.cleanup(gpio)
     return state
 
 
