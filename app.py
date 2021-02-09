@@ -72,4 +72,4 @@ api = create_api(app)
 api.add_resource(GPIOControl, '/gpio/<int:pin>/status')
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host="0.0.0.0")
