@@ -1,15 +1,17 @@
 from flask import Flask
 from flask_restful import Api, Resource, reqparse, abort
+
 try:
     import RPi.GPIO as GPIO
 except RuntimeError:
-    print("Error importing RPi.GPIO!  This is probably because you need superuser privileges.  You can achieve this by using 'sudo' to run your script")
+    print(
+        "Error importing RPi.GPIO!  This is probably because you need superuser privileges.  You can achieve this by using 'sudo' to run your script")
 gpio_put_args = reqparse.RequestParser()
 gpio_put_args.add_argument("status", type=int, help="Status of the GPIO is required", required=True)
 
 
-def check_gpio(pin):
-    if pin > 26:
+def check_gpio(gpio):
+    if gpio > 26:
         abort(404, message="Pin is not valid")
 
 
@@ -17,8 +19,7 @@ def check_status(status):
     if not status == 0 or status == 1:
         abort(404, message="Status is not valid")
 
-
-def set_GPIO(gpio, state): #witch check
+def set_GPIO(gpio, state):  # witch check
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(gpio, GPIO.OUT)
     GPIO.output(gpio, state)
@@ -26,13 +27,13 @@ def set_GPIO(gpio, state): #witch check
     GPIO.cleanup(gpio)
     return state
 
+
 def get_GPIO(gpio):
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(gpio, GPIO.OUT)
     state = GPIO.input(gpio)
     GPIO.cleanup(gpio)
     return state
-
 
 
 class GPIOControl(Resource):
@@ -69,7 +70,7 @@ def create_api(app):
 
 app = create_app()
 api = create_api(app)
-api.add_resource(GPIOControl, '/gpio/<int:pin>/status')
+api.add_resource(GPIOControl, '/gpio/<int:gpio>/status')
 
 if __name__ == '__main__':
     # flask doc: allows to access the server in your local network
