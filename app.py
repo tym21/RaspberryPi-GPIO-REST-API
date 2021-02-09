@@ -1,6 +1,9 @@
 from flask import Flask
 from flask_restful import Api, Resource, reqparse, abort
-
+try:
+    import RPi.GPIO as GPIO
+except RuntimeError:
+    print("Error importing RPi.GPIO!  This is probably because you need superuser privileges.  You can achieve this by using 'sudo' to run your script")
 gpio_put_args = reqparse.RequestParser()
 gpio_put_args.add_argument("status", type=int, help="Status of the GPIO is required", required=True)
 
@@ -15,6 +18,23 @@ def check_status(status):
         abort(404, message="Status is not valid")
 
 
+def set_GPIO(gpio, state): #witch check
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(gpio, GPIO.OUT)
+    GPIO.output(gpio, state)
+    state = GPIO.input(gpio)
+    GPIO.cleanup(gpio)
+    return state
+
+def get_GPIO(gpio):
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(gpio, GPIO.OUT)
+    state = GPIO.input(gpio)
+    GPIO.cleanup(gpio)
+    return state
+
+
+
 class GPIOControl(Resource):
     def get(self, gpio):
         check_gpio(gpio)
@@ -23,11 +43,12 @@ class GPIOControl(Resource):
                 "status": status
                 }
 
-    def put(self, pin):
-        check_gpio(pin)
+    def put(self, gpio):
+        check_gpio(gpio)
         args = gpio_put_args.parse_args()
         check_status(args["status"])
-        return {"gpio": pin,
+        set_GPIO(gpio, args["status"])
+        return {"gpio": gpio,
                 "status": args["status"]
                 }
 
@@ -41,6 +62,7 @@ def create_app():
 
 
 def create_api(app):
+    # create the api
     api = Api(app)
     return api
 
