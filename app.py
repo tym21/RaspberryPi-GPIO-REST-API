@@ -7,6 +7,7 @@ except RuntimeError:
     print(
         "Error importing RPi.GPIO!  This is probably because you need superuser privileges.  You can achieve this by "
         "using 'sudo' to run your script")
+
 gpio_put_args = reqparse.RequestParser()
 gpio_put_args.add_argument("state", type=int, help="Status of the GPIO is required", required=True)
 
