@@ -36,15 +36,21 @@ def get_gpio(gpio):
     state = GPIO.input(gpio)
     return state
 
+class GPIOCleanup:
+    def post(self):
+        GPIO.cleanup()
 
-class GPIOControl(Resource):
-    def get(self, gpio):
+
+class GPIOState(Resource):
+    @staticmethod
+    def get(gpio):
         check_gpio_valid(gpio)
         return {"gpio": gpio,
                 "state": get_gpio(gpio)
                 }
 
-    def put(self, gpio):
+    @staticmethod
+    def put(gpio):
         check_gpio_valid(gpio)
         args = gpio_put_args.parse_args()
         requested_state = args["state"]
@@ -71,7 +77,8 @@ def create_api(app):
 
 app = create_app()
 api = create_api(app)
-api.add_resource(GPIOControl, '/gpio/<int:gpio>/state')
+api.add_resource(GPIOState, '/gpio/<int:gpio>/state')
+
 
 if __name__ == '__main__':
     # flask doc: allows to access the server in your local network
